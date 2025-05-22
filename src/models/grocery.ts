@@ -7,6 +7,7 @@ class Grocery extends Model {
   public name!: string;
   public unit!: string;
   public price!: number;
+  public imageUrl!: string;
 }
 
 Grocery.init(
@@ -35,6 +36,10 @@ Grocery.init(
     price: {
       type: DataTypes.FLOAT,
       allowNull: false,
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

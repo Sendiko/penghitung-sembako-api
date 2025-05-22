@@ -44,10 +44,28 @@ const GroceryController = {
 
   async createGrocery(req: Request, res: Response) {
     try {
-      await Grocery.create(req.body);
+      if (!req.file) {
+        return res.status(400).json({
+          status: 400,
+          message: "Image file is required",
+        });
+      }
+
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      const imageUrl = `${baseUrl}/public/groceries/${req.file.filename}`;
+
+      const grocery = await Grocery.create({
+        userId: req.body.userId,
+        name: req.body.name,
+        unit: req.body.unit,
+        price: req.body.price,
+        imageUrl: imageUrl,
+      });
+
       return res.status(201).json({
         status: 201,
         message: "Grocery created successfully",
+        grocery: grocery,
       });
     } catch (error: any) {
       return res.status(500).json({
@@ -57,7 +75,6 @@ const GroceryController = {
       });
     }
   },
-
   async updateGrocery(req: Request, res: Response) {
     try {
       const grocery = await Grocery.findByPk(req.params.id);
@@ -67,10 +84,25 @@ const GroceryController = {
           message: "Grocery not found",
         });
       }
-      await grocery.update(req.body);
+
+      let imageUrl = grocery.imageUrl;
+      if (req.file) {
+        const baseUrl = `${req.protocol}://${req.get("host")}`;
+        imageUrl = `${baseUrl}/public/groceries/${req.file.filename}`;
+      }
+
+      const updated = await grocery.update({
+        userId: req.body.userId ?? grocery.userId,
+        name: req.body.name ?? grocery.name,
+        unit: req.body.unit ?? grocery.unit,
+        price: req.body.price ?? grocery.price,
+        imageUrl,
+      });
+
       return res.status(200).json({
         status: 200,
         message: "Grocery updated successfully",
+        data: updated,
       });
     } catch (error: any) {
       return res.status(500).json({
