@@ -6,13 +6,13 @@ const syncModels = async () => {
   try {
     User.hasMany(History, { foreignKey: "userId" });
     User.hasMany(Grocery, { foreignKey: "userId" });
-    User.sync();
+    await User.sync();
 
     Grocery.belongsTo(User, {
       foreignKey: "userId",
     });
     Grocery.hasMany(History, { foreignKey: "groceryId" });
-    Grocery.sync();
+    await Grocery.sync();
 
     History.belongsTo(User, {
       foreignKey: "userId",
@@ -20,7 +20,7 @@ const syncModels = async () => {
     History.belongsTo(Grocery, {
       foreignKey: "groceryId",
     });
-    History.sync();
+    await History.sync();
   } catch (error: any) {
     console.error("Error syncing models:", error);
   }
