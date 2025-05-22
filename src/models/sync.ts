@@ -5,6 +5,7 @@ import User from "./user";
 const syncModels = async () => {
   try {
     User.hasMany(History, { foreignKey: "userId" });
+    User.hasMany(Grocery, { foreignKey: "userId" });
     User.sync();
 
     Grocery.belongsTo(User, {
