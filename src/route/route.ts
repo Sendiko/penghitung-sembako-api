@@ -4,6 +4,7 @@ import UserController from "../controller/user_controller";
 import GroceryController from "../controller/grocery_controller";
 import HistoryController from "../controller/history_controller";
 import express from "express";
+import upload from "../middleware/upload";
 
 const router = express.Router();
 
@@ -12,8 +13,16 @@ router.post("/user", UserController.createUser);
 
 router.get("/grocery/:userId", GroceryController.getGroceries);
 router.get("/grocery/:id", GroceryController.getGrocery);
-router.post("/grocery", GroceryController.createGrocery);
-router.put("/grocery/:id", GroceryController.updateGrocery);
+router.post(
+  "/grocery",
+  upload.single("image"),
+  GroceryController.createGrocery
+);
+router.put(
+  "/grocery/:id",
+  upload.single("image"),
+  GroceryController.updateGrocery
+);
 router.delete("/grocery/:id", GroceryController.deleteGrocery);
 
 router.get("/history/:userId", HistoryController.getHistory);
