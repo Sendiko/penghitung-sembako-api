@@ -36,6 +36,7 @@ Grocery.init(
   {
     sequelize: sequelize, // passing the `sequelize` instance is required
     modelName: "Grocery", // We need to choose the model name
+    tableName: "groceries", // We need to choose the table name
   }
 );
 

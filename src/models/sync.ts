@@ -4,21 +4,18 @@ import User from "./user";
 
 const syncModels = async () => {
   try {
-    User.hasMany(Grocery, {
-      foreignKey: "userId",
-    });
     User.sync();
 
     Grocery.belongsTo(User, {
-      foreignKey: "userId",
+      foreignKey: "id",
     });
     Grocery.sync();
 
     History.hasOne(User, {
-      foreignKey: "userId",
+      foreignKey: "id",
     });
     History.hasOne(Grocery, {
-      foreignKey: "groceryId",
+      foreignKey: "id",
     });
     History.sync();
   } catch (error: any) {

@@ -41,6 +41,7 @@ History.init(
   {
     sequelize: sequelize, // passing the `sequelize` instance is required
     modelName: "History", // We need to choose the model name
+    tableName: "histories", // We need to choose the table name
   }
 );
 

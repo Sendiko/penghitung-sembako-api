@@ -31,6 +31,7 @@ User.init(
   {
     sequelize: sequelize, // passing the `sequelize` instance is required
     modelName: "User", // We need to choose the model name
+    tableName: "users", // We need to choose the table name
   }
 );
 
