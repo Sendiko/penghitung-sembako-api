@@ -19,6 +19,10 @@ Grocery.init(
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "users", // name of Target model
+        key: "id", // key in Target model that we're referencing
+      },
     },
     name: {
       type: DataTypes.STRING,

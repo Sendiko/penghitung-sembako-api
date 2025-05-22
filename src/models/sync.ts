@@ -7,15 +7,15 @@ const syncModels = async () => {
     User.sync();
 
     Grocery.belongsTo(User, {
-      foreignKey: "id",
+      foreignKey: "userId",
     });
     Grocery.sync();
 
-    History.hasOne(User, {
-      foreignKey: "id",
+    History.belongsTo(User, {
+      foreignKey: "userId",
     });
-    History.hasOne(Grocery, {
-      foreignKey: "id",
+    History.belongsTo(Grocery, {
+      foreignKey: "groceryId",
     });
     History.sync();
   } catch (error: any) {

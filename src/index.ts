@@ -4,6 +4,7 @@ import syncModels from "./models/sync";
 import cors from "cors";
 import config from "./config/config";
 import path from "path";
+import router from "./route/route";
 
 const PORT: number = parseInt(config.PORT);
 const IP: string = "localhost";
@@ -15,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "../public")));
+
+app.use(router);
 
 syncModels();
 
