@@ -5,6 +5,7 @@ import GroceryController from "../controller/grocery_controller";
 import HistoryController from "../controller/history_controller";
 import express from "express";
 import upload from "../middleware/upload";
+import StatisticController from "../controller/statistic_controller";
 
 const router = express.Router();
 
@@ -27,5 +28,7 @@ router.delete("/grocery/:id", GroceryController.deleteGrocery);
 
 router.get("/history/:userId", HistoryController.getHistory);
 router.post("/history", HistoryController.createHistory);
+
+router.get("/stats/:userId", StatisticController.getStatistics);
 
 export default router;
