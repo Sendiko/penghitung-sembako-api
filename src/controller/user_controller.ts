@@ -26,6 +26,16 @@ const UserController = {
 
   createUser: async (req: Request, res: Response) => {
     try {
+      const isExisting = await User.findOne({
+        where: { email: req.body.email },
+      });
+
+      if (isExisting) {
+        return res.status(400).json({
+          status: 400,
+          message: "User with this email already exists",
+        });
+      }
       await User.create(req.body);
       return res.status(201).json({
         status: 201,
