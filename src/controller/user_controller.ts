@@ -31,8 +31,8 @@ const UserController = {
       });
 
       if (isExisting) {
-        return res.status(400).json({
-          status: 400,
+        return res.status(200).json({
+          status: 200,
           message: "User with this email already exists",
           user: isExisting,
         });
