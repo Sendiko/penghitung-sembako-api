@@ -34,6 +34,7 @@ const UserController = {
         return res.status(400).json({
           status: 400,
           message: "User with this email already exists",
+          user: isExisting,
         });
       }
       const user = await User.create(req.body);
