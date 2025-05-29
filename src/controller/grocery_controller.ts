@@ -102,7 +102,7 @@ const GroceryController = {
       return res.status(200).json({
         status: 200,
         message: "Grocery updated successfully",
-        data: updated,
+        grocery: updated,
       });
     } catch (error: any) {
       return res.status(500).json({
