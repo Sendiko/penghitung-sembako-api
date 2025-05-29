@@ -13,7 +13,7 @@ router.get("/user/:id", UserController.getUser);
 router.post("/user", UserController.createUser);
 
 router.get("/grocery/:userId", GroceryController.getGroceries);
-router.get("/grocery/:id", GroceryController.getGrocery);
+router.get("/grocery/details/:id", GroceryController.getGrocery);
 router.post(
   "/grocery",
   upload.single("image"),
