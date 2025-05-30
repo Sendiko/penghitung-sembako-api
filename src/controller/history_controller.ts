@@ -5,7 +5,7 @@ import Grocery from "../models/grocery";
 const HistoryController = {
   async getHistory(req: Request, res: Response) {
     try {
-      const history = await History.findOne({
+      const history = await History.findAll({
         where: { userId: req.params.userId },
         include: Grocery,
       });
