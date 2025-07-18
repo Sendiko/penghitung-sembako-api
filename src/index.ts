@@ -21,6 +21,10 @@ app.get("/", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../views/docs.html"));
 })
 
+app.get("/test", (req: Request, res: Response) => {
+  res.send("You're connected to the Internet.")
+})
+
 app.use(router);
 
 syncModels();
