@@ -3,7 +3,7 @@ import sequelize from "./index";
 
 class Grocery extends Model {
   public id!: number;
-  public userId!: number;
+  public storeId!: number;
   public name!: string;
   public unit!: string;
   public price!: number;
@@ -17,12 +17,12 @@ Grocery.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    userId: {
+    storeId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "users", // name of Target model
-        key: "id", // key in Target model that we're referencing
+        model: "stores", 
+        key: "id", 
       },
     },
     name: {

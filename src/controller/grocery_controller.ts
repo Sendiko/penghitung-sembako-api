@@ -27,7 +27,7 @@ const GroceryController = {
   async getGroceries(req: Request, res: Response) {
     try {
       const groceries = await Grocery.findAll({
-        where: { userId: req.params.userId },
+        where: { storeId: req.params.storeId },
       });
       return res.status(200).json({
         status: 200,
@@ -55,7 +55,7 @@ const GroceryController = {
       const imageUrl = `${baseUrl}/public/groceries/${req.file.filename}`;
 
       const grocery = await Grocery.create({
-        userId: req.body.userId,
+        storeId: req.body.storeId,
         name: req.body.name,
         unit: req.body.unit,
         price: req.body.price,
@@ -92,7 +92,7 @@ const GroceryController = {
       }
 
       const updated = await grocery.update({
-        userId: req.body.userId ?? grocery.userId,
+        storeId: req.body.userId ?? grocery.storeId,
         name: req.body.name ?? grocery.name,
         unit: req.body.unit ?? grocery.unit,
         price: req.body.price ?? grocery.price,
