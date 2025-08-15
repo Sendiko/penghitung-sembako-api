@@ -1,15 +1,19 @@
 import Grocery from "./grocery";
 import History from "./history";
+import Store from "./store";
 import User from "./user";
 
 const syncModels = async () => {
   try {
     User.hasMany(History, { foreignKey: "userId" });
-    User.hasMany(Grocery, { foreignKey: "userId" });
+    User.hasMany(Store, { foreignKey: "userId" });
     await User.sync();
 
-    Grocery.belongsTo(User, {
-      foreignKey: "userId",
+    Store.belongsTo(User, { foreignKey: "userId" });
+    await Store.sync();
+
+    Grocery.belongsTo(Store, {
+      foreignKey: "storeId",
     });
     Grocery.hasMany(History, { foreignKey: "groceryId" });
     await Grocery.sync();
