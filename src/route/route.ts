@@ -2,11 +2,11 @@
 
 import UserController from "../controller/user_controller";
 import GroceryController from "../controller/grocery_controller";
-import HistoryController from "../controller/history_controller";
 import express from "express";
 import upload from "../middleware/upload";
 import StatisticController from "../controller/statistic_controller";
 import StoreController from "../controller/store_controller";
+import TransactionController from "../controller/transaction_controller";
 
 const router = express.Router();
 
@@ -26,6 +26,7 @@ router.put(
   GroceryController.updateGrocery
 );
 router.delete("/grocery/:id", GroceryController.deleteGrocery);
+router.put("/grocery/:id/stock", GroceryController.updateStock);
 
 router.get("/store/:userId", StoreController.getStores);
 router.get("/store/details/:id", StoreController.getStore);
@@ -33,8 +34,9 @@ router.post("/store", StoreController.createStore);
 router.put("/store/:id", StoreController.updateStore);
 router.delete("/store/:id", StoreController.deleteStore);
 
-router.get("/history/:userId", HistoryController.getHistory);
-router.post("/history", HistoryController.createHistory);
+router.get("/transaction/:userId", TransactionController.getTransacions);
+router.get("/transaction/details/:id", TransactionController.getTransaction);
+router.post("/transaction", TransactionController.createTransaction);
 
 router.get("/stats/:userId", StatisticController.getStatistics);
 

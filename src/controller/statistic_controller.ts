@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Grocery from "../models/grocery";
-import History from "../models/history";
 
 const StatisticController = {
   async getStatistics(req: Request, res: Response) {
@@ -13,10 +12,6 @@ const StatisticController = {
       const totalSales = await History.sum("totalPrice", {
         where: { userId: userId },
       });
-      // @ts-ignore count is Sequelize method
-      const totalHistory = await History.count({
-        where: { userId: userId },
-      });
 
       return res.status(200).json({
         status: 200,
@@ -24,7 +19,6 @@ const StatisticController = {
         statistics: {
           groceryCount: groceryCount,
           totalSales: totalSales || 0,
-          totalHistory: totalHistory || 0,
         },
       });
     } catch (error: any) {

@@ -1,10 +1,17 @@
 import { Request, Response } from "express";
 import Grocery from "../models/grocery";
+import Stock from "../models/stock";
 
 const GroceryController = {
   async getGrocery(req: Request, res: Response) {
     try {
-      const grocery = await Grocery.findByPk(req.params.id);
+      const grocery = await Grocery.findByPk(req.params.id, {
+        include: [{
+          model: Stock,
+          as: 'stock',
+          attributes: ['quantity']
+        }]
+      });
       if (!grocery) {
         return res.status(404).json({
           status: 404,
@@ -28,6 +35,11 @@ const GroceryController = {
     try {
       const groceries = await Grocery.findAll({
         where: { storeId: req.params.storeId },
+        include: [{
+          model: Stock,
+          as: 'stock',
+          attributes: ['quantity']
+        }]
       });
       return res.status(200).json({
         status: 200,
@@ -62,10 +74,24 @@ const GroceryController = {
         imageUrl: imageUrl,
       });
 
+      await Stock.create({
+        storeId: req.body.storeId,
+        groceryId: grocery.id,
+        quantity: req.body.quantity || 0 
+      });
+
+      const groceryWithStock = await Grocery.findByPk(grocery.id, {
+        include: [{
+          model: Stock,
+          as: 'stock',
+          attributes: ['quantity']
+        }]
+      });
+
       return res.status(201).json({
         status: 201,
         message: "Grocery created successfully",
-        grocery: grocery,
+        grocery: groceryWithStock,
       });
     } catch (error: any) {
       return res.status(500).json({
@@ -126,6 +152,52 @@ const GroceryController = {
       return res.status(200).json({
         status: 200,
         message: "Grocery deleted successfully",
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        status: 500,
+        message: "Internal server error",
+        error: error.message,
+      });
+    }
+  },
+
+  async updateStock(req: Request, res: Response) {
+    try {
+      const { quantity } = req.body;
+      
+      if (quantity === undefined || quantity < 0) {
+        return res.status(400).json({
+          status: 400,
+          message: "Valid quantity is required",
+        });
+      }
+
+      const stock = await Stock.findOne({
+        where: { groceryId: req.params.id }
+      });
+
+      if (!stock) {
+        return res.status(404).json({
+          status: 404,
+          message: "Stock not found for this grocery",
+        });
+      }
+
+      await stock.update({ quantity });
+
+      const groceryWithStock = await Grocery.findByPk(req.params.id, {
+        include: [{
+          model: Stock,
+          as: 'stock',
+          attributes: ['quantity']
+        }]
+      });
+
+      return res.status(200).json({
+        status: 200,
+        message: "Stock updated successfully",
+        grocery: groceryWithStock,
       });
     } catch (error: any) {
       return res.status(500).json({
