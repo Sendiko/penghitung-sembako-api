@@ -3,7 +3,7 @@ import sequelize from "./index";
 
 class Store extends Model {
   public id!: number;
-  public userId!: number;
+  public userId!: string;
   public name!: string;
   public address!: string;
   public phone!: string;
@@ -17,7 +17,7 @@ Store.init({
     primaryKey: true,
   },
   userId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     references: {
       model: "users",
       key: "id",
