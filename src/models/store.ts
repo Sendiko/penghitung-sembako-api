@@ -17,7 +17,7 @@ Store.init({
     primaryKey: true,
   },
   userId: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     references: {
       model: "users",
       key: "id",
@@ -38,8 +38,8 @@ Store.init({
   email: {
     type: DataTypes.STRING,
     allowNull: true,
-    },
   },
+},
   {
     sequelize: sequelize,
     modelName: "Store",
