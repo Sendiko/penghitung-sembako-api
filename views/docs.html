@@ -300,6 +300,229 @@
             </div>
 
             
+            <!--  Store Endpoints  -->
+            <div class="py-4 border-t border-gray-200">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Store Endpoints</h2>
+            </div>
+
+            <!-- Endpoint: Get All Stores for a User -->
+            <div id="get-stores-by-user" class="api-endpoint bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Get All Stores for User</h2>
+                <div class="flex items-center space-x-2 mb-4">
+                    <span class="px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-md">GET</span>
+                    <code class="text-lg font-medium text-gray-700">/store/:userId</code>
+                </div>
+                <p class="text-gray-600 mb-4">Retrieves a list of all stores associated with a specific user ID.</p>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Path Parameters</h3>
+                    <ul class="list-disc list-inside ml-4 text-gray-600">
+                        <li><code>userId</code> (required): The unique identifier of the user</li>
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Headers</h3>
+                    <pre><code class="language-json">{
+  "Content-Type": "application/json"
+}</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Response (Success)</h3>
+                    <pre><code class="language-json">{
+    "status": 200,
+    "store": [
+        {
+            "id": 1,
+            "userId": 3,
+            "name": "Toko Sembako Jaya",
+            "address": "Jl. Merdeka No. 123",
+            "phone": "081234567890",
+            "email": "toko1@example.com",
+            "createdAt": "2025-05-27T17:24:39.000Z",
+            "updatedAt": "2025-05-27T17:24:39.000Z"
+        },
+        {
+            "id": 2,
+            "userId": 3,
+            "name": "Toko Sembako Maju",
+            "address": "Jl. Ahmad Yani No. 456",
+            "phone": "081987654321",
+            "email": "toko2@example.com",
+            "createdAt": "2025-06-01T10:15:22.000Z",
+            "updatedAt": "2025-06-01T10:15:22.000Z"
+        }
+    ]
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Endpoint: Get Store Details -->
+            <div id="get-store-details" class="api-endpoint bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Get Store Details</h2>
+                <div class="flex items-center space-x-2 mb-4">
+                    <span class="px-3 py-1 bg-green-500 text-white text-sm font-semibold rounded-md">GET</span>
+                    <code class="text-lg font-medium text-gray-700">/store/details/:id</code>
+                </div>
+                <p class="text-gray-600 mb-4">Retrieves detailed information about a specific store by its unique ID.</p>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Path Parameters</h3>
+                    <ul class="list-disc list-inside ml-4 text-gray-600">
+                        <li><code>id</code> (required): The unique identifier of the store</li>
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Headers</h3>
+                    <pre><code class="language-json">{
+  "Content-Type": "application/json"
+}</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Response (Success)</h3>
+                    <pre><code class="language-json">{
+    "status": 200,
+    "stores": {
+        "id": 1,
+        "userId": 3,
+        "name": "Toko Sembako Jaya",
+        "address": "Jl. Merdeka No. 123",
+        "phone": "081234567890",
+        "email": "toko1@example.com",
+        "createdAt": "2025-05-27T17:24:39.000Z",
+        "updatedAt": "2025-05-27T17:24:39.000Z"
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Endpoint: Create Store -->
+            <div id="create-store" class="api-endpoint bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Create Store</h2>
+                <div class="flex items-center space-x-2 mb-4">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded-md">POST</span>
+                    <code class="text-lg font-medium text-gray-700">/store</code>
+                </div>
+                <p class="text-gray-600 mb-4">Creates a new store with the provided details.</p>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Headers</h3>
+                    <pre><code class="language-json">{
+  "Content-Type": "application/json"
+}</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Request Body</h3>
+                    <pre><code class="language-json">{
+    "userId": 3,
+    "name": "Toko Sembako Jaya",
+    "address": "Jl. Merdeka No. 123",
+    "phone": "081234567890",
+    "email": "toko1@example.com"
+}</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Response (Success)</h3>
+                    <pre><code class="language-json">{
+    "status": 201,
+    "message": "Store created successfully",
+    "store": {
+        "id": 1,
+        "userId": 3,
+        "name": "Toko Sembako Jaya",
+        "address": "Jl. Merdeka No. 123",
+        "phone": "081234567890",
+        "email": "toko1@example.com",
+        "updatedAt": "2025-06-08T15:37:54.199Z",
+        "createdAt": "2025-06-08T15:37:54.199Z"
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Endpoint: Update Store -->
+            <div id="update-store" class="api-endpoint bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Update Store</h2>
+                <div class="flex items-center space-x-2 mb-4">
+                    <span class="px-3 py-1 bg-yellow-500 text-white text-sm font-semibold rounded-md">PUT</span>
+                    <code class="text-lg font-medium text-gray-700">/store/:id</code>
+                </div>
+                <p class="text-gray-600 mb-4">Updates an existing store by its unique ID. All fields are optional for partial updates.</p>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Path Parameters</h3>
+                    <ul class="list-disc list-inside ml-4 text-gray-600">
+                        <li><code>id</code> (required): The unique identifier of the store</li>
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Request Body (Optional Fields)</h3>
+                    <pre><code class="language-json">{
+    "name": "Toko Sembako Jaya Updated",
+    "address": "Jl. Merdeka No. 124",
+    "phone": "081234567891",
+    "email": "toko1-updated@example.com"
+}</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Response (Success)</h3>
+                    <pre><code class="language-json">{
+    "status": 200,
+    "message": "Store updated successfully",
+    "store": {
+        "id": 1,
+        "userId": 3,
+        "name": "Toko Sembako Jaya Updated",
+        "address": "Jl. Merdeka No. 124",
+        "phone": "081234567891",
+        "email": "toko1-updated@example.com",
+        "createdAt": "2025-06-08T15:44:15.000Z",
+        "updatedAt": "2025-06-08T15:46:23.436Z"
+    }
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Endpoint: Delete Store -->
+            <div id="delete-store" class="api-endpoint bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Delete Store</h2>
+                <div class="flex items-center space-x-2 mb-4">
+                    <span class="px-3 py-1 bg-red-500 text-white text-sm font-semibold rounded-md">DELETE</span>
+                    <code class="text-lg font-medium text-gray-700">/store/:id</code>
+                </div>
+                <p class="text-gray-600 mb-4">Deletes a specific store from the system by its unique ID.</p>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Path Parameters</h3>
+                    <ul class="list-disc list-inside ml-4 text-gray-600">
+                        <li><code>id</code> (required): The unique identifier of the store</li>
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Headers</h3>
+                    <pre><code class="language-json">{
+  "Content-Type": "application/json"
+}</code></pre>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-xl font-medium text-gray-700 mb-2">Response (Success)</h3>
+                    <pre><code class="language-json">{
+    "status": 200,
+    "message": "Store deleted successfully"
+}</code></pre>
+                </div>
+            </div>
+
+            
             <!--  History Endpoints  -->
             <div class="py-4 border-t border-gray-200">
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">History Endpoints</h2>
