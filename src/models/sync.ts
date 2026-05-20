@@ -9,12 +9,15 @@ const syncModels = async () => {
     User.hasMany(Store, { foreignKey: "userId" });
     await User.sync();
 
-    Store.hasMany(Transaction, { foreignKey: "storeId" });
+    Store.hasMany(Transaction, { foreignKey: "storeId", onDelete: "CASCADE", onUpdate: "CASCADE" });
     Store.belongsTo(User, { foreignKey: "userId" });
     await Store.sync();
 
+    Store.hasMany(Grocery, { foreignKey: "storeId", onDelete: "CASCADE", onUpdate: "CASCADE" });
     Grocery.belongsTo(Store, {
       foreignKey: "storeId",
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     });
     Grocery.hasMany(Transaction, { foreignKey: "groceryId" });
     Grocery.hasOne(Stock, { foreignKey: "groceryId", as: "stock" });

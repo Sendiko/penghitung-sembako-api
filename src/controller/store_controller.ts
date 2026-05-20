@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import Store from "../models/store";
+import Grocery from "../models/grocery";
+import Stock from "../models/stock";
+import Transaction from "../models/transaction";
 
 const StoreController = {
   async getStores(req: Request, res: Response) {
@@ -138,6 +141,9 @@ const StoreController = {
         });
       }
 
+      await Transaction.destroy({ where: { storeId: req.params.id } });
+      await Stock.destroy({ where: { storeId: req.params.id } });
+      await Grocery.destroy({ where: { storeId: req.params.id } });
       await store.destroy();
 
       return res.status(200).json({
