@@ -43,10 +43,13 @@ const UserController = {
         });
       }
       const user = await User.create(req.body);
+      const userResponse = await User.findByPk(user.id, {
+        include: [{ model: Store }],
+      });
       return res.status(201).json({
         status: 201,
         message: "User created successfully",
-        user: user,
+        user: userResponse,
       });
     } catch (error: any) {
       return res.status(500).json({
