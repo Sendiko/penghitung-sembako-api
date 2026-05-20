@@ -27,8 +27,14 @@ app.get("/test", (req: Request, res: Response) => {
 
 app.use(router);
 
-syncModels();
-
-app.listen(PORT, IP, () => {
-  console.log(`Hello World ${IP}:${PORT}`);
-});
+(async () => {
+  try {
+    await syncModels();
+    app.listen(PORT, IP, () => {
+      console.log(`Hello World ${IP}:${PORT}`);
+    });
+  } catch (error: any) {
+    console.error("Failed to sync models and start server:", error);
+    process.exit(1);
+  }
+})();
