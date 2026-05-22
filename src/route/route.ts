@@ -34,7 +34,7 @@ router.post("/store", StoreController.createStore);
 router.put("/store/:id", StoreController.updateStore);
 router.delete("/store/:id", StoreController.deleteStore);
 
-router.get("/transaction/:userId", TransactionController.getTransacions);
+router.get("/transaction/:storeId", TransactionController.getTransacions);
 router.get("/transaction/details/:id", TransactionController.getTransaction);
 router.post("/transaction", TransactionController.createTransaction);
 router.put("/transaction/:id", TransactionController.updateTransaction);
