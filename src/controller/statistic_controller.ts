@@ -27,12 +27,23 @@ const StatisticController = {
         ],
       } as any);
 
+      const totalHistory = await Transaction.count({
+        include: [
+          {
+            model: Store,
+            where: { userId: userId },
+            attributes: [],
+          },
+        ],
+      });
+
       return res.status(200).json({
         status: 200,
         message: "Grocery count retrieved successfully",
         statistics: {
           groceryCount: groceryCount,
           totalSales: totalSales || 0,
+          totalHistory: totalHistory,
         },
       });
     } catch (error: any) {
