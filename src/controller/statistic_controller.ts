@@ -11,17 +11,17 @@ const StatisticController = {
         include: [
           {
             model: Store,
-            where: { userId: userId },
+            where: { storeId: userId },
             attributes: [],
           },
         ],
       });
-      
+
       const totalSales = await Transaction.sum("totalPrice", {
         include: [
           {
             model: Store,
-            where: { userId: userId },
+            where: { storeId: userId },
             attributes: [],
           },
         ],
@@ -31,7 +31,7 @@ const StatisticController = {
         include: [
           {
             model: Store,
-            where: { userId: userId },
+            where: { storeId: userId },
             attributes: [],
           },
         ],
