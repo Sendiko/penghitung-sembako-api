@@ -12,6 +12,7 @@ const StatisticController = {
           {
             model: Store,
             where: { userId: userId },
+            attributes: [],
           },
         ],
       });
@@ -21,6 +22,7 @@ const StatisticController = {
           {
             model: Store,
             where: { userId: userId },
+            attributes: [],
           },
         ],
       } as any);
