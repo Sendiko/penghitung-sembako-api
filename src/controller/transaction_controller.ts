@@ -75,7 +75,16 @@ const TransactionController = {
   },
   async createTransaction(req: Request, res: Response) {
     try {
-      const result = withTransaction(async(t) => {
+      const amount = parseInt(req.body.amount ?? req.body.quantity, 10);
+      if (isNaN(amount)) {
+        return res.status(400).json({
+          status: 400,
+          message: "Amount/Quantity is required and must be a number."
+        });
+      }
+      req.body.amount = amount;
+
+      const result = await withTransaction(async(t) => {
         const transaction = await Transaction.create(req.body, {transaction: t})
         
         const stock = await Stock.findOne({
@@ -84,7 +93,7 @@ const TransactionController = {
           }
         });
         await stock?.update({
-          quantity: stock.quantity - req.body.amount
+          quantity: (stock?.quantity ?? 0) - amount
         }, {transaction: t});
 
         return transaction;
@@ -105,45 +114,59 @@ const TransactionController = {
   },
   async updateTransaction(req: Request, res: Response) {
     try {
-
+ 
       if (!req.params.id) {
         return res.status(400).json({
           status: 400,
           message: "Transaction ID required."
         });
       }
-
+ 
       const transaction = await Transaction.findByPk(req.params.id);
-
+ 
       if (!transaction) {
         return res.status(404).json({
           status: 404,
           message: "Transaction not found"
         })
       }
-
-      
-      if (req.body.amount) {
+ 
+      const amountVal = req.body.amount ?? req.body.quantity;
+      const amount = amountVal !== undefined ? parseInt(amountVal, 10) : undefined;
+      if (amount !== undefined) {
+        if (isNaN(amount)) {
+          return res.status(400).json({
+            status: 400,
+            message: "Amount/Quantity must be a valid number."
+          });
+        }
+        req.body.amount = amount;
+      }
+ 
+      if (req.body.amount !== undefined) {
         const stock = await Stock.findOne({
           where: {
-            groceryId: req.body.groceryId
+            groceryId: req.body.groceryId || transaction.groceryId
           }
         })
-
+ 
         await withTransaction(async(t) => {          
-          const newQty = stock?.quantity ?? 0 + transaction.amount - req.body.amount;;
-  
+          const newQty = (stock?.quantity ?? 0) + transaction.amount - req.body.amount;
+   
           await stock?.update({
             quantity: newQty
           }, {transaction: t})
-          await transaction.update(req.body)
+          await transaction.update(req.body, {transaction: t})
         });
         
-
-        return transaction
+        return res.status(200).json({
+          status: 200,
+          message: "Transactions successfully updated.",
+          transaction: transaction
+        });
       }
       
-
+ 
       return res.status(200).json({
         status: 200,
         message: "Transactions successfully updated.",
@@ -181,9 +204,9 @@ const TransactionController = {
         }
       })
       
-      withTransaction(async(t) => {
+      await withTransaction(async(t) => {
         await stock?.update({
-          quantity: stock.quantity + transaction.amount
+          quantity: (stock?.quantity ?? 0) + transaction.amount
         }, {transaction: t})
         await transaction.destroy({transaction: t});
       })
