@@ -118,7 +118,7 @@ const GroceryController = {
       }
 
       const updated = await grocery.update({
-        storeId: req.body.userId ?? grocery.storeId,
+        storeId: req.body.storeId ?? grocery.storeId,
         name: req.body.name ?? grocery.name,
         unit: req.body.unit ?? grocery.unit,
         price: req.body.price ?? grocery.price,

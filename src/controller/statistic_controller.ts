@@ -1,17 +1,29 @@
 import { Request, Response } from "express";
 import Grocery from "../models/grocery";
+import Store from "../models/store";
+import Transaction from "../models/transaction";
 
 const StatisticController = {
   async getStatistics(req: Request, res: Response) {
     try {
       const userId = req.params.userId;
       const groceryCount = await Grocery.count({
-        where: { userId: userId },
+        include: [
+          {
+            model: Store,
+            where: { userId: userId },
+          },
+        ],
       });
-      // @ts-ignore sum is Sequelize method
-      const totalSales = await History.sum("totalPrice", {
-        where: { userId: userId },
-      });
+      
+      const totalSales = await Transaction.sum("totalPrice", {
+        include: [
+          {
+            model: Store,
+            where: { userId: userId },
+          },
+        ],
+      } as any);
 
       return res.status(200).json({
         status: 200,
