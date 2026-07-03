@@ -4,7 +4,8 @@ import syncModels from "./models/sync";
 import cors from "cors";
 import config from "./config/config";
 import path from "path";
-import router from "./route/route";
+// router will be imported after models are synced to ensure associations
+// are registered before controllers (which import models) are loaded.
 
 const PORT: number = parseInt(config.PORT);
 const IP: string = "localhost";
@@ -25,11 +26,13 @@ app.get("/test", (req: Request, res: Response) => {
   res.send("You're connected to the Internet.")
 })
 
-app.use(router);
-
-(async () => {
+;(async () => {
   try {
     await syncModels();
+
+    const router = (await import("./route/route")).default;
+    app.use(router);
+
     app.listen(PORT, IP, () => {
       console.log(`Hello World ${IP}:${PORT}`);
     });

@@ -11,7 +11,7 @@ const StatisticController = {
         include: [
           {
             model: Store,
-            where: { storeId: userId },
+            where: { userId: userId },
             attributes: [],
           },
         ],
@@ -21,7 +21,7 @@ const StatisticController = {
         include: [
           {
             model: Store,
-            where: { storeId: userId },
+            where: { userId: userId },
             attributes: [],
           },
         ],
@@ -31,7 +31,7 @@ const StatisticController = {
         include: [
           {
             model: Store,
-            where: { storeId: userId },
+            where: { userId: userId },
             attributes: [],
           },
         ],
