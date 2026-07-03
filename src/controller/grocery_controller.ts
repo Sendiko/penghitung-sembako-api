@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Grocery from "../models/grocery";
 import Stock from "../models/stock";
+import minioService from "../services/minio";
 
 const GroceryController = {
   async getGrocery(req: Request, res: Response) {
@@ -56,22 +57,26 @@ const GroceryController = {
 
   async createGrocery(req: Request, res: Response) {
     try {
-      if (!req.file) {
+      if (!req.file || !req.file.buffer) {
         return res.status(400).json({
           status: 400,
           message: "Image file is required",
         });
       }
 
-      const baseUrl = `${req.protocol}://${req.get("host")}`;
-      const imageUrl = `${baseUrl}/public/groceries/${req.file.filename}`;
+      const objectName = `${Date.now()}-${req.file.originalname}`;
+      const imageUrl = await minioService.uploadObject(
+        objectName,
+        req.file.buffer,
+        req.file.mimetype
+      );
 
       const grocery = await Grocery.create({
         storeId: req.body.storeId,
         name: req.body.name,
         unit: req.body.unit,
         price: req.body.price,
-        imageUrl: imageUrl,
+        imageUrl,
       });
 
       await Stock.create({
@@ -112,9 +117,13 @@ const GroceryController = {
       }
 
       let imageUrl = grocery.imageUrl;
-      if (req.file) {
-        const baseUrl = `${req.protocol}://${req.get("host")}`;
-        imageUrl = `${baseUrl}/public/groceries/${req.file.filename}`;
+      if (req.file && req.file.buffer) {
+        const objectName = `${Date.now()}-${req.file.originalname}`;
+        imageUrl = await minioService.uploadObject(
+          objectName,
+          req.file.buffer,
+          req.file.mimetype
+        );
       }
 
       const updated = await grocery.update({
