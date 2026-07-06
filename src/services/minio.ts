@@ -9,6 +9,14 @@ const minioClient = new Client({
   secretKey: config.MINIO_SECRET_KEY,
 });
 
+const presignedClient = new Client({
+  endPoint: config.MINIO_PRESIGNED_ENDPOINT || config.MINIO_ENDPOINT,
+  port: parseInt(config.MINIO_PRESIGNED_PORT || config.MINIO_PORT, 10),
+  useSSL: config.MINIO_PRESIGNED_USE_SSL === "true" || config.MINIO_USE_SSL === "true",
+  accessKey: config.MINIO_ACCESS_KEY,
+  secretKey: config.MINIO_SECRET_KEY,
+});
+
 const bucketName = config.MINIO_BUCKET;
 
 async function ensureBucketExists() {
@@ -24,7 +32,7 @@ function getPublicUrl(objectName: string) {
 
 async function createPresignedUploadUrl(objectName: string, contentType: string) {
   await ensureBucketExists();
-  return minioClient.presignedPutObject(bucketName, objectName, 24 * 60 * 60);
+  return presignedClient.presignedPutObject(bucketName, objectName, 24 * 60 * 60);
 }
 
 async function uploadObject(objectName: string, buffer: Buffer, contentType: string) {
