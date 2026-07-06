@@ -27,10 +27,13 @@ const UploadController = {
         publicUrl: minioService.getPublicUrl(targetObjectName),
       });
     } catch (error: any) {
+      console.error("Failed to generate presigned upload URL", error);
+
       return res.status(500).json({
         status: 500,
-        message: "Internal server error",
-        error: error.message,
+        message: "Failed to generate presigned upload URL",
+        error: error?.message || "Unknown error",
+        details: error?.stack || null,
       });
     }
   },
