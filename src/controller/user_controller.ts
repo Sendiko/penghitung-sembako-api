@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 const UserController = {
   getUser: async (req: Request, res: Response) => {
     try {
-      const user = await User.findByPk(req.params.id, {
+      const user = await User.findByPk(req.params.id as string, {
         include: [{ model: Store }],
       });
       if (!user) {

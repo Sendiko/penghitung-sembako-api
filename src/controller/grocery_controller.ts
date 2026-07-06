@@ -6,7 +6,7 @@ import minioService from "../services/minio";
 const GroceryController = {
   async getGrocery(req: Request, res: Response) {
     try {
-      const grocery = await Grocery.findByPk(req.params.id, {
+      const grocery = await Grocery.findByPk(req.params.id as string, {
         include: [{
           model: Stock,
           as: 'stock',
@@ -57,19 +57,25 @@ const GroceryController = {
 
   async createGrocery(req: Request, res: Response) {
     try {
-      if (!req.file || !req.file.buffer) {
-        return res.status(400).json({
-          status: 400,
-          message: "Image file is required",
-        });
+      const imageUrlFromBody = req.body.imageUrl || req.body.image_url;
+
+      let imageUrl = imageUrlFromBody || "";
+
+      if (!imageUrl && req.file && req.file.buffer) {
+        const objectName = `${Date.now()}-${req.file.originalname}`;
+        imageUrl = await minioService.uploadObject(
+          objectName,
+          req.file.buffer,
+          req.file.mimetype
+        );
       }
 
-      const objectName = `${Date.now()}-${req.file.originalname}`;
-      const imageUrl = await minioService.uploadObject(
-        objectName,
-        req.file.buffer,
-        req.file.mimetype
-      );
+      if (!imageUrl) {
+        return res.status(400).json({
+          status: 400,
+          message: "Image file or imageUrl is required",
+        });
+      }
 
       const grocery = await Grocery.create({
         storeId: req.body.storeId,
@@ -108,7 +114,7 @@ const GroceryController = {
   },
   async updateGrocery(req: Request, res: Response) {
     try {
-      const grocery = await Grocery.findByPk(req.params.id);
+      const grocery = await Grocery.findByPk(req.params.id as string);
       if (!grocery) {
         return res.status(404).json({
           status: 404,
@@ -117,7 +123,11 @@ const GroceryController = {
       }
 
       let imageUrl = grocery.imageUrl;
-      if (req.file && req.file.buffer) {
+      const imageUrlFromBody = req.body.imageUrl || req.body.image_url;
+
+      if (imageUrlFromBody) {
+        imageUrl = imageUrlFromBody;
+      } else if (req.file && req.file.buffer) {
         const objectName = `${Date.now()}-${req.file.originalname}`;
         imageUrl = await minioService.uploadObject(
           objectName,
@@ -150,7 +160,7 @@ const GroceryController = {
 
   async deleteGrocery(req: Request, res: Response) {
     try {
-      const grocery = await Grocery.findByPk(req.params.id);
+      const grocery = await Grocery.findByPk(req.params.id as string);
       if (!grocery) {
         return res.status(404).json({
           status: 404,
@@ -195,7 +205,7 @@ const GroceryController = {
 
       await stock.update({ quantity });
 
-      const groceryWithStock = await Grocery.findByPk(req.params.id, {
+      const groceryWithStock = await Grocery.findByPk(req.params.id as string, {
         include: [{
           model: Stock,
           as: 'stock',

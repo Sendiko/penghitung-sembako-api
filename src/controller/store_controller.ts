@@ -95,7 +95,7 @@ const StoreController = {
         });
       }
 
-      const store = await Store.findByPk(req.params.id);
+      const store = await Store.findByPk(req.params.id as string);
       if (!store) {
         return res.status(404).json({
           status: 404,
@@ -133,7 +133,7 @@ const StoreController = {
         });
       }
 
-      const store = await Store.findByPk(req.params.id);
+      const store = await Store.findByPk(req.params.id as string);
       if (!store) {
         return res.status(404).json({
           status: 404,

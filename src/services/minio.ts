@@ -18,14 +18,25 @@ async function ensureBucketExists() {
   }
 }
 
+function getPublicUrl(objectName: string) {
+  return `${config.MINIO_URL}/${bucketName}/${objectName}`;
+}
+
+async function createPresignedUploadUrl(objectName: string, contentType: string) {
+  await ensureBucketExists();
+  return minioClient.presignedPutObject(bucketName, objectName, 24 * 60 * 60);
+}
+
 async function uploadObject(objectName: string, buffer: Buffer, contentType: string) {
   await ensureBucketExists();
   await minioClient.putObject(bucketName, objectName, buffer, buffer.length, {
     "Content-Type": contentType,
   });
-  return `${config.MINIO_URL}/${bucketName}/${objectName}`;
+  return getPublicUrl(objectName);
 }
 
 export default {
   uploadObject,
+  createPresignedUploadUrl,
+  getPublicUrl,
 };
