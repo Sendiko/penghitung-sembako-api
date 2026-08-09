@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Health Check - Penghitung Sembako API</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter & Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        code, pre {
+            font-family: 'Fira Code', monospace;
+        }
+        .ping-slow {
+            animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-8">
+    <div class="max-w-4xl w-full mx-auto space-y-8 flex-1">
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-slate-800">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white tracking-tight flex items-center gap-3">
+                    Server Health Monitor
+                    <span class="text-xs bg-blue-500/10 text-blue-400 font-semibold px-2.5 py-1 rounded-full border border-blue-500/20">Live Status</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">Real-time health telemetry for Penghitung Sembako API</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="/" class="text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 px-3.5 py-2 rounded-lg border border-slate-700 transition-colors">
+                    ← API Docs
+                </a>
+                <button id="refresh-btn" onclick="fetchHealthData()" class="text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-2 rounded-lg shadow transition-colors flex items-center gap-1.5">
+                    <svg id="refresh-icon" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Refresh
+                </button>
+            </div>
+        </header>
+
+        <!-- Overall Status Banner -->
+        <div id="overall-status-card" class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all">
+            <div class="flex items-center gap-4">
+                <div class="relative flex h-5 w-5">
+                    <span id="ping-dot" class="ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span id="status-dot" class="relative inline-flex rounded-full h-5 w-5 bg-emerald-500"></span>
+                </div>
+                <div>
+                    <h2 id="overall-status-text" class="text-xl font-bold text-white">Checking System Health...</h2>
+                    <p id="overall-status-subtext" class="text-xs text-slate-400">Pinging core microservices and connections</p>
+                </div>
+            </div>
+            <div class="text-right text-xs text-slate-400 space-y-0.5">
+                <div>Last Check: <span id="last-updated" class="text-slate-200 font-mono">--:--:--</span></div>
+                <div>Auto-refreshing every <span class="text-blue-400 font-medium">10s</span></div>
+            </div>
+        </div>
+
+        <!-- System Components Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Express Server -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                        </span>
+                        <h3 class="font-semibold text-white">Express API</h3>
+                    </div>
+                    <span id="server-badge" class="px-2 py-0.5 text-xs font-bold rounded bg-slate-800 text-slate-400">---</span>
+                </div>
+                <div class="space-y-2 text-xs text-slate-300 font-mono">
+                    <div class="flex justify-between py-1 border-b border-slate-800/80">
+                        <span class="text-slate-400 font-sans">Uptime:</span>
+                        <span id="server-uptime" class="text-slate-200">--</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/80">
+                        <span class="text-slate-400 font-sans">Memory Usage:</span>
+                        <span id="server-memory" class="text-slate-200">--</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400 font-sans">Node Version:</span>
+                        <span id="server-node" class="text-slate-200">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database (MySQL) -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="p-2 rounded-lg bg-purple-500/10 text-purple-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                        </span>
+                        <h3 class="font-semibold text-white">Database (MySQL)</h3>
+                    </div>
+                    <span id="db-badge" class="px-2 py-0.5 text-xs font-bold rounded bg-slate-800 text-slate-400">---</span>
+                </div>
+                <div class="space-y-2 text-xs text-slate-300 font-mono">
+                    <div class="flex justify-between py-1 border-b border-slate-800/80">
+                        <span class="text-slate-400 font-sans">Dialect:</span>
+                        <span class="text-slate-200">MySQL / Sequelize</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/80">
+                        <span class="text-slate-400 font-sans">Connection Latency:</span>
+                        <span id="db-latency" class="text-slate-200">--</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400 font-sans">Connection Status:</span>
+                        <span id="db-status-msg" class="text-slate-200">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Storage (MinIO S3) -->
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-4 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                        </span>
+                        <h3 class="font-semibold text-white">Object Storage</h3>
+                    </div>
+                    <span id="storage-badge" class="px-2 py-0.5 text-xs font-bold rounded bg-slate-800 text-slate-400">---</span>
+                </div>
+                <div class="space-y-2 text-xs text-slate-300 font-mono">
+                    <div class="flex justify-between py-1 border-b border-slate-800/80">
+                        <span class="text-slate-400 font-sans">Provider:</span>
+                        <span class="text-slate-200">MinIO S3</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/80">
+                        <span class="text-slate-400 font-sans">Target Bucket:</span>
+                        <span id="storage-bucket" class="text-slate-200">--</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400 font-sans">Bucket Access:</span>
+                        <span id="storage-status-msg" class="text-slate-200">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Raw JSON Response Preview -->
+        <div class="bg-slate-900 border border-slate-800 p-5 rounded-xl space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Raw Telemetry JSON Response (<code class="text-blue-400">GET /test?format=json</code>)</h3>
+                <button onclick="navigator.clipboard.writeText(document.getElementById('raw-json').innerText)" class="text-xs text-slate-400 hover:text-slate-200 transition-colors">Copy JSON</button>
+            </div>
+            <pre class="max-h-52 overflow-y-auto text-xs text-slate-300"><code id="raw-json" class="language-json">Loading health telemetry...</code></pre>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-8 pt-4 border-t border-slate-800 text-center text-xs text-slate-500">
+        <p>&copy; Sendiko. Penghitung Sembako API Health Monitor.</p>
+    </footer>
+
+    <script>
+        async function fetchHealthData() {
+            const refreshIcon = document.getElementById('refresh-icon');
+            refreshIcon.classList.add('animate-spin');
+
+            try {
+                const response = await fetch('/test?format=json');
+                const data = await response.json();
+
+                document.getElementById('raw-json').innerText = JSON.stringify(data, null, 4);
+                document.getElementById('last-updated').innerText = new Date(data.timestamp).toLocaleTimeString();
+
+                // Overall Status
+                const overallCard = document.getElementById('overall-status-card');
+                const statusDot = document.getElementById('status-dot');
+                const pingDot = document.getElementById('ping-dot');
+                const overallText = document.getElementById('overall-status-text');
+                const overallSubtext = document.getElementById('overall-status-subtext');
+
+                if (data.status === 'healthy') {
+                    overallCard.className = "bg-slate-900 border border-emerald-500/30 p-6 rounded-2xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+                    statusDot.className = "relative inline-flex rounded-full h-5 w-5 bg-emerald-500";
+                    pingDot.className = "ping-slow absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
+                    overallText.innerText = "All Systems Operational";
+                    overallText.className = "text-xl font-bold text-emerald-400";
+                    overallSubtext.innerText = "All database, storage, and server services are responding normally.";
+                } else if (data.status === 'degraded') {
+                    overallCard.className = "bg-slate-900 border border-amber-500/30 p-6 rounded-2xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+                    statusDot.className = "relative inline-flex rounded-full h-5 w-5 bg-amber-500";
+                    pingDot.className = "ping-slow absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75";
+                    overallText.innerText = "System Degraded";
+                    overallText.className = "text-xl font-bold text-amber-400";
+                    overallSubtext.innerText = "One or more secondary services are experiencing issues.";
+                } else {
+                    overallCard.className = "bg-slate-900 border border-red-500/30 p-6 rounded-2xl shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4";
+                    statusDot.className = "relative inline-flex rounded-full h-5 w-5 bg-red-500";
+                    pingDot.className = "ping-slow absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75";
+                    overallText.innerText = "System Unhealthy";
+                    overallText.className = "text-xl font-bold text-red-400";
+                    overallSubtext.innerText = "Critical service failure detected.";
+                }
+
+                // Express Server
+                const serverBadge = document.getElementById('server-badge');
+                serverBadge.innerText = data.services.server.status;
+                serverBadge.className = "px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                document.getElementById('server-uptime').innerText = data.uptime;
+                document.getElementById('server-memory').innerText = data.system.memoryUsage.rss;
+                document.getElementById('server-node').innerText = data.system.nodeVersion;
+
+                // Database
+                const dbBadge = document.getElementById('db-badge');
+                if (data.services.database.status === 'UP') {
+                    dbBadge.innerText = "UP";
+                    dbBadge.className = "px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                    document.getElementById('db-latency').innerText = `${data.services.database.latencyMs} ms`;
+                    document.getElementById('db-status-msg').innerText = "Connected";
+                } else {
+                    dbBadge.innerText = "DOWN";
+                    dbBadge.className = "px-2 py-0.5 text-xs font-bold rounded bg-red-500/20 text-red-400 border border-red-500/30";
+                    document.getElementById('db-latency').innerText = "N/A";
+                    document.getElementById('db-status-msg').innerText = data.services.database.error || "Connection Failed";
+                }
+
+                // Storage
+                const storageBadge = document.getElementById('storage-badge');
+                document.getElementById('storage-bucket').innerText = data.services.storage.bucket || "groceries";
+                if (data.services.storage.status === 'UP') {
+                    storageBadge.innerText = "UP";
+                    storageBadge.className = "px-2 py-0.5 text-xs font-bold rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                    document.getElementById('storage-status-msg').innerText = "Accessible";
+                } else {
+                    storageBadge.innerText = "DOWN";
+                    storageBadge.className = "px-2 py-0.5 text-xs font-bold rounded bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                    document.getElementById('storage-status-msg').innerText = data.services.storage.error || "Unreachable";
+                }
+
+            } catch (err) {
+                console.error("Health check fetch failed:", err);
+            } finally {
+                refreshIcon.classList.remove('animate-spin');
+            }
+        }
+
+        // Initial fetch and 10s auto-refresh timer
+        fetchHealthData();
+        setInterval(fetchHealthData, 10000);
+    </script>
+</body>
+</html>
