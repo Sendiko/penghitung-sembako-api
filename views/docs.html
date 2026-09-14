@@ -140,6 +140,41 @@
                     </div>
                 </div>
 
+                <!-- Endpoint: Login User -->
+                <div id="login-user" class="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-sm space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="text-lg font-semibold text-white">Login User</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="method-post px-2.5 py-1 text-white text-xs font-bold rounded">POST</span>
+                            <code class="text-sm font-semibold text-slate-200">/user/login</code>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-300">Logs in a user using email and password.</p>
+
+                    <div>
+                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Request Body (JSON)</h4>
+                        <pre><code class="language-json">{
+    "email": "john@example.com",
+    "password": "your-password"
+}</code></pre>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Response (200 OK)</h4>
+                        <pre><code class="language-json">{
+    "status": 200,
+    "message": "Login successful",
+    "user": {
+        "id": 1,
+        "username": "john",
+        "email": "john@example.com",
+        "profileUrl": "https://example.com/avatar.png",
+        "Stores": []
+    }
+}</code></pre>
+                    </div>
+                </div>
+
                 <!-- Endpoint: Create User -->
                 <div id="create-user" class="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-sm space-y-4">
                     <div class="flex flex-wrap items-center justify-between gap-3">
