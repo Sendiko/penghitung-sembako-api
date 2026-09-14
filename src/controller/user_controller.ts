@@ -28,6 +28,46 @@ const UserController = {
     }
   },
 
+  loginUser: async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({
+          status: 400,
+          message: "Email and password are required",
+        });
+      }
+
+      const user = await User.findOne({
+        where: { email, password },
+        include: [{ model: Store }],
+      });
+
+      if (!user) {
+        return res.status(401).json({
+          status: 401,
+          message: "Invalid email or password",
+        });
+      }
+
+      const userData = user.toJSON();
+      delete userData.password;
+
+      return res.status(200).json({
+        status: 200,
+        message: "Login successful",
+        user: userData,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        status: 500,
+        message: "Internal server error",
+        error: error.message,
+      });
+    }
+  },
+
   createUser: async (req: Request, res: Response) => {
     try {
       const isExisting = await User.findOne({

@@ -11,6 +11,7 @@ import UploadController from "../controller/upload_controller";
 const router = express.Router();
 
 router.get("/user/:id", UserController.getUser);
+router.post("/user/login", UserController.loginUser);
 router.post("/user", UserController.createUser);
 
 router.get("/grocery/:storeId", GroceryController.getGroceries);
