@@ -4,7 +4,7 @@ Ini adalah API yang dibuat untuk mensupport projek PenghitungSembako untuk Asses
 
 # Documentation
 
-[Here](https://sembako.sendiko.my.id/) is the documentation
+[Here](https://sembako.sendiko.dev/) is the documentation
 
 # Credit
 
