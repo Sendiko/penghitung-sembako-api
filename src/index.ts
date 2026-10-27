@@ -104,7 +104,7 @@ app.get("/test", async (req: Request, res: Response) => {
     await syncModels();
 
     const router = (await import("./route/route")).default;
-    app.use("/api/" + router);
+    app.use("/api", router);
 
     app.listen(PORT, IP, () => {
       console.log(`Hello World ${IP}:${PORT}`);
