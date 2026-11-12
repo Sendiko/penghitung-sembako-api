@@ -7,7 +7,7 @@ import config from "./config/config";
 import path from "path";
 
 const PORT: number = parseInt(config.PORT);
-const IP: string = "localhost";
+const IP: string = config.HOST;
 
 const app: Application = express();
 

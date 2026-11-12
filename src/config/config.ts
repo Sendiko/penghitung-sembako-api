@@ -26,10 +26,12 @@ const presignedMinioConfig = parseUrl(presignedMinioUrl);
 
 const config = {
   PORT: process.env.PORT || "3000",
-  HOST: process.env.DBHOST || "127.0.1.1",
+  HOST: process.env.HOST || "0.0.0.0",
   DBNAME: process.env.DBNAME || "",
   DBUSER: process.env.DBUSER || "",
   DBPASS: process.env.DBPASS || "",
+  DBHOST: process.env.DBHOST || "127.0.0.1",
+  DBPORT: process.env.DBPORT || "3306",
   DBDIALECT: process.env.DBDIALECT || "mysql",
   MINIO_ENDPOINT: process.env.MINIO_ENDPOINT || "127.0.0.1",
   MINIO_PORT: process.env.MINIO_PORT || "9002",
